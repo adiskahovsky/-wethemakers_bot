@@ -12,13 +12,16 @@ class SQL:
 
         self.cursor = self.conn.cursor()
 
-    #cursor.execute("CREATE TABLE tasks(telegram_id varchar,task varchar,done int)")
-    #cursor.execute("CREATE TABLE tasks (telegram_id TEXT, task TEXT,done int)")
-    def SQL_all(self,tel_id,task,done=0):
-        self.cursor.execte("insert into tasks(`{}`,`{}`,done)".format(tel_id,task,done))
+
+    def SQL_all(self,tel_id,task,data,done='0'):
+
+        self.cursor.execute("INSERT INTO tasks (telegram_id, task, data,done) VALUES ('{}','{}','{}','{}')".format(tel_id,task,data,done))
+        self.conn.commit()
 
     def SQL_done(self,id,done):
         self.cursor.execte("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))
+
+
 
     def __del__(self):
 
