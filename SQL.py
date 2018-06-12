@@ -21,6 +21,6 @@ class SQL:
         self.cursor.execte("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))
 
     def __del__(self):
-        
+
         self.conn.commit()
         self.conn.close()
