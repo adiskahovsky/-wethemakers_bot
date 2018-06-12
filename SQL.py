@@ -21,8 +21,6 @@ class SQL:
     def SQL_done(self,id,done):
         self.cursor.execte("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))
         
-    def SQL_done(self,id,done):
-        self.cursor.execute("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))
 
     def SQL_all(self,tel_id,done):
         self.cursor.execute("SELECT * FROM tasks WHERE telegram_id={} and done ={}".format(tel_id,done))
