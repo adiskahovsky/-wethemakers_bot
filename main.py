@@ -1,4 +1,4 @@
-
+import time
 import config
 import telebot
 import SQL
@@ -11,49 +11,108 @@ obj = SQL.SQL()
 def task(message):
     text = message.text
     id = str(message.chat.id)
+    name = message.from_user.first_name
+    last_name = message.from_user.last_name
+
+
+    print(name)
+
     text = text.split()
     text.pop(0)
+    result =''
     for i in text:
-        text= ' '
-        text += str(i)
 
-    print(text)
-    obj.SQL_all(tel_id=id,task=str(text),data=3)
+        result += str(i) + ' '
+
+    print(result)
+    obj.SQL_add_task(tel_id=id,task=str(result),data=3,name=name,last_name=last_name)
 
     print(id)
-   
+
+@bot.message_handler(commands=['all'])
+def task(message):
+    result=obj.SQL_all(0)
+
+    result_str=[]
+    tasks= []
+    names = []
+    for i in list(result):
+       # i=list(i)
+       # i.pop()
+        tasks.append(i[2].split())
+        names.append([i[0],i[1]])
+        for j in i:
+            result_str.append(j)
+
+    strr=''
+    for i in names:
+        for j in tasks:
+            strr+=i[0]+' '
+            strr+=i[1]+' '
+            if ((str(i[0])[0] + str(i[1])[0]) *2) == j[0]:
+                strr+=j[1]+' '
+
+
+    strr = strr.split()
+    print(strr)
+    strr = unique_list(strr)
+    result =''
+    for i in strr:
+
+        result+=i+' '
+
+    print(result)
+    #print(result)
+
+    bot.send_message(message.chat.id,result)
+
+
+
+
+
+
+
+
+
+def unique_list(l):
+    ulist = []
+    [ulist.append(x) for x in l if x not in ulist]
+    return ulist
+
+
+"""
 @bot.message_handler(commands=['all'])
 def send_all(message):
-    tel_id = str(message.chat.id)
-    task_all = sql.SQL_all(tel_id,'0')
-    bot.send_message(tel_id, task_all)
+   tel_id = str(message.chat.id)
+   task_all = SQL.SQL_all(tel_id,'0')
+   bot.send_message(tel_id, task_all)
 
 @bot.message_handler(commands=['stats'])
 def send_stats(message):
-	now = datetime.datetime.now()
-	now_day = int(now.strftime("%j"))
-	if(now_day > 7):
-		late_date = now_day - 7
-	else:
-		#late = 1
-		late_year = now.year - 1
-		late_date = later_year.strftime("%j")
-		late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
-		late_date = int(later_year.strftime("%j")) + now_day - 7
+   now = datetime.datetime.now()
+   now_day = int(now.strftime("%j"))
+   if(now_day > 7):
+       late_date = now_day - 7
+   else:
+       #late = 1
+       late_year = now.year - 1
+       late_date = later_year.strftime("%j")
+       late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
+       late_date = int(later_year.strftime("%j")) + now_day - 7
 
-	tel_id = str(message.chat.id)
-	task_stats = sql.SQL_stats(tel_id,'0',now_day,late_date)
-	bot.send_message(tel_id, task_stats)
+   tel_id = str(message.chat.id)
+   task_stats = sql.SQL_stats(tel_id,'0',now_day,late_date)
+   bot.send_message(tel_id, task_stats)
 
 @bot.message_handler(commands=['done'])
 def send_done(message):
-    message = message.text
-    task = message.split('/done')[1]
-    tel_id = str(message.chat.id)
-    sql.SQL_task(tel_id,task,done=1)
+   message = message.text
+   task = message.split('/done')[1]
+   tel_id = str(message.chat.id)
+   sql.SQL_task(tel_id,task,done=1)
 
 
-
+"""
 
 
 

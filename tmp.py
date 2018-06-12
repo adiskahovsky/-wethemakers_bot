@@ -1,4 +1,4 @@
-import pymysql
+"""import pymysql
 
 conn = pymysql.connect(
             host='ftp70.hostland.ru',
@@ -9,15 +9,18 @@ conn = pymysql.connect(
 
 
 cursor = conn.cursor()
-cursor.execute("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTO_INCREMENT,telegram_id TEXT, task TEXT,data TEXT,done TEXT)")
+#cursor.execute("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTO_INCREMENT,last_name TEXT,name TEXT,telegram_id TEXT, task TEXT,data TEXT,done TEXT)")
+#cursor.execute("SELECT * FROM tasks WHERE done LIKE '0'")
+cursor.execute("SELECT last_name, name, task FROM tasks WHERE done LIKE '{}'".format('0'))
 
 
-
+result = cursor.fetchall()
+print(result)
 conn.commit()
 conn.close()
 
 
-"""
+
 
 import telebot
 API_TOKEN = '600546248:AAEhltRhA6yqmnJbsxoBIwxS17NcQB4tGAI'
@@ -31,3 +34,14 @@ def echo_msg(message):
 
 if __name__ =='__main__':
     bot.polling(none_stop=True,interval=0)"""
+
+
+def unique_list(l):
+    ulist = []
+    [ulist.append(x) for x in l if x not in ulist]
+    return ulist
+
+
+
+
+print(unique_list(['adis','adis','Kahovsky','Kahovsky']))
