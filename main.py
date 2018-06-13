@@ -58,6 +58,24 @@ def task(message):
                         strr +='⭕'+n+'\n'
     bot.send_message(message.chat.id,strr)
     print(strr)
+    
+@bot.message_handler(commands=['stats'])
+def send_stats(message):
+	now = datetime.datetime.now()
+	now_day = int(now.strftime("%j"))
+	tel_id = str(message.chat.id)
+	bot.send_message(tel_id, now_day)
+	if(now_day > 7):
+		late_date = now_day - 7
+	else:
+		#late = 1
+		late_year = now.year - 1
+		late_date = later_year.strftime("%j")
+		late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
+		late_date = int(later_year.strftime("%j")) + now_day - 7
+
+	task_stats = sql.SQL_stats(tel_id,'0',now_day,late_date)
+	bot.send_message(tel_id, task_stats)
 
 """
     result=obj.SQL_all(0)
