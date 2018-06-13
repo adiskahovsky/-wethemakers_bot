@@ -75,7 +75,31 @@ def send_stats(message):
 		late_date = int(later_year.strftime("%j")) + now_day - 7
 
 	task_stats = sql.SQL_stats(tel_id,'0',now_day,late_date)
-	bot.send_message(tel_id, task_stats)
+	if(task_stats):
+		messageanswer = ''
+		rang = 0
+		ResultList = task_stats
+		for value in ResultList:
+			if(rang == 0):
+				smile = "📋"
+			else:
+				smile = "⭕️"
+			messageanswer = messageanswer + smile + value + '\n'
+			rang = rang + 1
+    		bot.send_message(tel_id, messageanswer)
+	else:
+		bot.send_message(tel_id, 'Записей не найдено')
+		
+		
+@bot.message_handler(commands=['done'])
+def send_done(message):
+	task = message.text.split('/done')[1]
+	now = datetime.datetime.now()
+	now_day = int(now.strftime("%j"))
+	done = "1"
+	data = now_day
+	tel_id = str(message.chat.id)
+	sql.SQL_done(tel_id,task,done,data)
 
 """
     result=obj.SQL_all(0)
