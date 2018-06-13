@@ -49,6 +49,11 @@ class SQL:
 
     def SQL_done(self,id,done):
         self.cursor.execte("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))
+        
+    def SQL_stats(self,tel_id,done,now_day,late_date):
+        self.cursor.execute("SELECT * FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,done,now_day,late_date))
+        self.otvet = self.cursor.fetchall()
+        return self.otvet
 
     """
 
