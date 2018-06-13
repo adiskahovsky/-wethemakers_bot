@@ -47,8 +47,9 @@ class SQL:
         return self.name
 
 
-    def SQL_done(self,id,done):
-        self.cursor.execte("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))
+    def SQL_done(tel_id,task,done,data):
+        self.cursor.execute("INSERT INTO tasks (telegram_id, task, data, done) VALUES ('{}','{}','{}','{}')".format(tel_id,task,data,done))
+        self.conn.commit()
         
     def SQL_stats(self,tel_id,done,now_day,late_date):
         self.cursor.execute("SELECT * FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,done,now_day,late_date))
