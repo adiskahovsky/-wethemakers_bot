@@ -26,6 +26,26 @@ class SQL:
         self.result = self.cursor.fetchall()
         return self.result
 
+    def SQL_id(self,done):
+        self.cursor.execute("SELECT id FROM tasks WHERE done LIKE '{}'".format(done))
+        self.result = self.cursor.fetchall()
+        return self.result
+
+    def SQL_names(self,id):
+        self.cursor.execute("SELECT last_name, name FROM tasks WHERE id LIKE {}".format(id))
+        self.result = self.cursor.fetchall()
+        return self.result
+
+    def SQL_task_ln(self,last_name):
+        self.cursor.execute("SELECT task FROM tasks WHERE last_name LIKE '{}'".format(last_name))
+        self.last_name = self.cursor.fetchall()
+        return self.last_name
+
+    def SQL_task_n(self,name):
+        self.cursor.execute("SELECT task FROM tasks WHERE name LIKE '{}'".format(name))
+        self.name = self.cursor.fetchall()
+        return self.name
+
 
     def SQL_done(self,id,done):
         self.cursor.execte("UPDATE tasks SET done = {} WHERE id ={}".format(done,id))

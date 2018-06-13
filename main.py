@@ -31,48 +31,83 @@ def task(message):
 
 @bot.message_handler(commands=['all'])
 def task(message):
+
+    result = obj.SQL_id(0)
+    print(result)
+    names=[]
+    for i in result:
+        for j in i:
+            names.append(obj.SQL_names(j))
+
+    print(names)
+    names = unique_list(names)
+    print(names)
+    strr=''
+    print('46')
+    for i in names:
+        for j in i:
+            print('49')
+            if(str_list(obj.SQL_task_ln(j[0]))==str_list(obj.SQL_task_n(j[1]))):
+                print('51')
+                strr+='\n'+'📋'+j[0]
+                strr+=j[1]+' '
+                strr+=" opens's tasks: "+'\n'
+                result = obj.SQL_task_ln(j[0])
+                for k in result:
+                    for n in k:
+                        strr +='⭕'+n+'\n'
+    bot.send_message(message.chat.id,strr)
+    print(strr)
+
+"""
     result=obj.SQL_all(0)
 
-    result_str=[]
-    tasks= []
-    names = []
-    for i in list(result):
-       # i=list(i)
-       # i.pop()
-        tasks.append(i[2].split())
-        names.append([i[0],i[1]])
+   result_str=[]
+   tasks= []
+   names = []
+   for i in list(result):
+      # i=list(i)
+      # i.pop()
+       tasks.append(i[2].split())
+       names.append([i[0],i[1]])
+       for j in i:
+           result_str.append(j)
+
+   strr=''
+   for i in names:
+       for j in tasks:
+           strr+=i[0]+' '
+           strr+=i[1]+' '
+           if ((str(i[0])[0] + str(i[1])[0]) *2) == j[0]:
+               strr+=j[1]+' '
+
+
+   strr = strr.split()
+   print(strr)
+   strr = unique_list(strr)
+   result =''
+   for i in strr:
+
+       result+=i+' '
+
+   print(result)
+   #print(result)
+
+   bot.send_message(message.chat.id,result)
+"""
+
+
+
+
+
+
+def str_list(l):
+    result=[]
+    for i in l:
         for j in i:
-            result_str.append(j)
+            result.append(j)
 
-    strr=''
-    for i in names:
-        for j in tasks:
-            strr+=i[0]+' '
-            strr+=i[1]+' '
-            if ((str(i[0])[0] + str(i[1])[0]) *2) == j[0]:
-                strr+=j[1]+' '
-
-
-    strr = strr.split()
-    print(strr)
-    strr = unique_list(strr)
-    result =''
-    for i in strr:
-
-        result+=i+' '
-
-    print(result)
-    #print(result)
-
-    bot.send_message(message.chat.id,result)
-
-
-
-
-
-
-
-
+    return result
 
 def unique_list(l):
     ulist = []
