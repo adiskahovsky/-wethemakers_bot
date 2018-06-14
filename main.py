@@ -4,6 +4,8 @@ import config
 import telebot
 import SQL
 import task
+from telebot import  types
+import re
 bot = telebot.TeleBot(config.API_TOKEN)
 obj = SQL.SQL()
 
@@ -57,7 +59,6 @@ def task(message):
 
 
 
-
     """
     result = obj.SQL_id(0)
     print(result)
@@ -87,7 +88,7 @@ def task(message):
     print(strr)
     """
 
-@bot.message_handler(commands=['stats'])
+@bot.message_handler(commands=['statsall'])
 def send_stats(message):
     now = datetime.datetime.now()
     now_day = int(now.strftime("%j"))
@@ -117,7 +118,7 @@ def send_stats(message):
             text1 = ' task'
         else:
             text1 = ' tasks'
-        messageanswer = '✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
+        messageanswer = '📋  Week summary of all: \n✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
         bot.send_message(tel_id, messageanswer)
     else:
         bot.send_message(tel_id, 'No task found')
@@ -139,6 +140,39 @@ def send_done(message):
         bot.send_message(tel_id, 'The task was successfully added and marked as done')
     else:
         bot.send_message(tel_id, 'You did not enter a task name')
+
+@bot.inline_handler(func=lambda query: True)
+def query_text(query):
+    digits_pattern= re.compile(r'^[0-9]+ [0-9]+$', re.MULTILINE)
+    digits_pattern = re.compile(r'[^\s*]', re.MULTILINE)
+    print("Пашет")
+    try:
+        print('ok')
+        matches = re.match(digits_pattern, query.query)
+        num1  = matches.group().split()
+        print('ok2')
+        print(num1)
+        result_list=[]
+        
+        result_list.append(
+            types.InlineQueryResultArticle('1', 'Title 1', types.InputTextMessageContent('Thanks for visit me'), None,
+                                           'http://telegram.org', True, 'Subtitle 1',
+                                           'https://telegram.org/img/t_logo.png', 640, 640))
+        print('ok3')
+        result_list.append(
+            types.InlineQueryResultArticle('2', 'Title 2', types.InputTextMessageContent('Thanks for visit me'), None,
+                                           'http://google.com', True, 'Subtitle 2',
+                                           'http://pbs.twimg.com/profile_images/848204538163195907/14Mw9m9Z.jpg', 640,
+                                           640))
+        m_sub = num1
+        print('ok4')
+
+
+        bot.answer_inline_query(query.id,result_list,cache_time=1)
+    except AttributeError as ex:
+        print("FUCKKKK")
+        return
+
 
 """
 @bot.inline_handler(func=lambda query: True)
