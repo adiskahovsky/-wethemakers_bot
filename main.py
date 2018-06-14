@@ -30,7 +30,7 @@ def task(message):
     data = now_day
     print(result)
     obj.SQL_add_task(tel_id=id,task=str(result),data=data,name=name,last_name=last_name)
-
+    bot.send_message(message.chat.id,'The task was successfully')
     print(id)
 
 @bot.message_handler(commands=['all'])
@@ -53,7 +53,7 @@ def task(message):
             print('49')
             if(str_list(obj.SQL_task_ln(j[0]))==str_list(obj.SQL_task_n(j[1]))):
                 print('51')
-                strr+='\n'+'📋'+j[0]
+                strr+='\n'+'📋'+j[0] + ' '
                 strr+=j[1]+' '
                 strr+=" opens's tasks: "+'\n'
                 result = obj.SQL_task_ln(j[0])
@@ -110,7 +110,7 @@ def send_done(message):
         now = datetime.datetime.now()
         now_day = int(now.strftime("%j"))
         done = 1
-        data = str(now_day)
+        data = now_day
         obj.SQL_done(tel_id,task,done,data,name,last_name)
         bot.send_message(tel_id, 'The task was successfully added and marked as done')
     else:

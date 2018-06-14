@@ -52,15 +52,13 @@ class SQL:
 
     def SQL_stats0(self,tel_id,now_day,late_date):
         done = str(0)
-        #self.cursor.execute("SELECT (*) FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,'1',now_day,late_date))
-        self.cursor.execute("SELECT count(*) FROM tasks WHERE `telegram_id` = {} and `done` = {}".format(tel_id,done))
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {}) and (data BETWEEN {} AND {})".format(tel_id,done,late_date,now_day))
         self.otvet = self.cursor.fetchone()
         return self.otvet
 
     def SQL_stats1(self,tel_id,now_day,late_date):
-        #self.cursor.execute("SELECT (*) FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,'0',now_day,late_date))
         done = str(1)
-        self.cursor.execute("SELECT count(*) FROM tasks WHERE `telegram_id` = {} and `done` = {}".format(tel_id,done))
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {}) and (data BETWEEN {} AND {})".format(tel_id,done,late_date,now_day))
         self.otvet = self.cursor.fetchone()
         return self.otvet
 
