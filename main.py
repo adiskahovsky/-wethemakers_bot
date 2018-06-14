@@ -62,13 +62,12 @@ def task(message):
                         strr +='⭕'+n+'\n'
     bot.send_message(message.chat.id,strr)
     print(strr)
-"""
+
 @bot.message_handler(commands=['stats'])
 def send_stats(message):
     now = datetime.datetime.now()
     now_day = int(now.strftime("%j"))
     tel_id = str(message.chat.id)
-    bot.send_message(tel_id, now_day)
     if(now_day > 7):
         late_date = now_day - 7
     else:
@@ -78,34 +77,58 @@ def send_stats(message):
         late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
         late_date = int(later_year.strftime("%j")) + now_day - 7
 
-    task_stats = sql.SQL_stats(tel_id,'0',now_day,late_date)
-    if(task_stats):
-        messageanswer = ''
-        rang = 0
-        ResultList = task_stats
-        for value in ResultList:
-            if(rang == 0):
-                smile = "📋"
-            else:
-                smile = "⭕️"
-            messageanswer = messageanswer + smile + value + '\n'
-            rang = rang + 1
-            bot.send_message(tel_id, messageanswer)
+    task_stats0 = obj.SQL_stats0(tel_id,now_day,late_date)
+    task_stats1 = obj.SQL_stats1(tel_id,now_day,late_date)
+    if(task_stats0 or task_stats1):
+        messageanswer0 = task_stats0[0]
+        messageanswer1 = task_stats1[0]
+        print(messageanswer0)
+        print(messageanswer1)
+        if(messageanswer0 < 2):
+            text0 = ' task'
+        else:
+            text0 = ' tasks'
+
+        if(messageanswer1 < 2):
+            text1 = ' task'
+        else:
+            text1 = ' tasks'
+        messageanswer = '✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
+        bot.send_message(tel_id, messageanswer)
     else:
-        bot.send_message(tel_id, 'Записей не найдено')
-		
-		
+        bot.send_message(tel_id, 'No task found')
+
+
 @bot.message_handler(commands=['done'])
 def send_done(message):
-	task = message.text.split('/done')[1]
-	now = datetime.datetime.now()
-	now_day = int(now.strftime("%j"))
-	done = "1"
-	data = now_day
-	tel_id = str(message.chat.id)
-	sql.SQL_done(tel_id,task,done,data)
+    task = message.text.split('/done')[1]
+    tel_id = str(message.chat.id)
+    name = message.from_user.first_name
+    last_name = message.from_user.last_name
+
+    if(task):
+        now = datetime.datetime.now()
+        now_day = int(now.strftime("%j"))
+        done = 1
+        data = str(now_day)
+        obj.SQL_done(tel_id,task,done,data,name,last_name)
+        bot.send_message(tel_id, 'The task was successfully added and marked as done')
+    else:
+        bot.send_message(tel_id, 'You did not enter a task name')
+
+
+@bot.inline_handler('inline_query')
+def query_text(inline_query):
+    print(inline_query)
+    try:
+        r = types.InlineQueryResultArticle('1', 'Result1', types.InputTextMessageContent('hi'))
+        r2 = types.InlineQueryResultArticle('2', 'Result2', types.InputTextMessageContent('hi'))
+        bot.answer_inline_query(inline_query.id, [r, r2])
+    except Exception as e:
+        print(e)
+
 """
-"""
+
     result=obj.SQL_all(0)
 
    result_str=[]
@@ -199,5 +222,3 @@ def send_done(message):
 
 if __name__ =='__main__':
     bot.polling(none_stop=True,interval=0)
-
-

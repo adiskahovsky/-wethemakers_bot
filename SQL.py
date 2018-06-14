@@ -46,28 +46,24 @@ class SQL:
         self.name = self.cursor.fetchall()
         return self.name
 
-
-    def SQL_done(tel_id,task,done,data):
-        self.cursor.execute("INSERT INTO tasks (telegram_id, task, data, done) VALUES ('{}','{}','{}','{}')".format(tel_id,task,data,done))
+    def SQL_done(self,tel_id,task,done,data,name,last_name):
+        self.cursor.execute("INSERT INTO tasks (telegram_id, task, data, done, name, last_name) VALUES ('{}','{}','{}','{}','{}','{}')".format(tel_id,task,data,done,name,last_name))
         self.conn.commit()
-        
-    def SQL_stats(self,tel_id,done,now_day,late_date):
-        self.cursor.execute("SELECT * FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,done,now_day,late_date))
-        self.otvet = self.cursor.fetchall()
+
+    def SQL_stats0(self,tel_id,now_day,late_date):
+        done = str(0)
+        #self.cursor.execute("SELECT (*) FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,'1',now_day,late_date))
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE `telegram_id` = {} and `done` = {}".format(tel_id,done))
+        self.otvet = self.cursor.fetchone()
         return self.otvet
 
-    """
+    def SQL_stats1(self,tel_id,now_day,late_date):
+        #self.cursor.execute("SELECT (*) FROM tasks WHERE telegram_id = {} and done = {} and `data` >= {} and `data` <= {}".format(tel_id,'0',now_day,late_date))
+        done = str(1)
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE `telegram_id` = {} and `done` = {}".format(tel_id,done))
+        self.otvet = self.cursor.fetchone()
+        return self.otvet
 
-  def SQL_all(self,tel_id,done):
-      self.cursor.execute("SELECT * FROM tasks WHERE telegram_id={} and done ={}".format(tel_id,done))
-      otvet = cursor.fetchone()
-      return otvet
-
-  def SQL_stats(self,tel_id,done,now_day,late_date):
-      self.cursor.execute("SELECT * FROM tasks WHERE telegram_id = {} and done = {} and `date` >= {} and `date` <= {}".format(tel_id,done,now_day,late_date))
-      otvet = cursor.fetchone()
-      return otvet
-"""
 
 
     def __del__(self):
