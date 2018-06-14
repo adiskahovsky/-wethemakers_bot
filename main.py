@@ -117,13 +117,18 @@ def send_done(message):
         bot.send_message(tel_id, 'You did not enter a task name')
 
 
-@bot.inline_handler('inline_query')
+@bot.inline_handler(func=lambda query: True)
 def query_text(inline_query):
     print(inline_query)
     try:
-        r = types.InlineQueryResultArticle('1', 'Result1', types.InputTextMessageContent('hi'))
-        r2 = types.InlineQueryResultArticle('2', 'Result2', types.InputTextMessageContent('hi'))
-        bot.answer_inline_query(inline_query.id, [r, r2])
+        r_sub = types.InlineQueryResultArticle(
+            id='id', title="Задача",
+            description="(текст задачи)",
+            input_message_content=types.InputTextMessageContent(
+            message_text="Задача отмечена как выполненная")
+
+
+        bot.answer_inline_query(inline_query.id, r_sub)
     except Exception as e:
         print(e)
 
