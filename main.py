@@ -20,6 +20,7 @@ def task(message):
 
     text = text.split()
     text.pop(0)
+
     result =''
     for i in text:
 
@@ -30,12 +31,34 @@ def task(message):
     data = now_day
     print(result)
     obj.SQL_add_task(tel_id=id,task=str(result),data=data,name=name,last_name=last_name)
-    bot.send_message(message.chat.id,'The task was successfully')
+    text2=''
+    for i in text:
+        text2+=i+' '
+    bot.send_message(message.chat.id,'⭕ {} added task: {}'.format(message.from_user.last_name+' '+
+                                                                  message.from_user.first_name,text2))
     print(id)
 
 @bot.message_handler(commands=['all'])
 def task(message):
 
+    if(len(obj.SQL_task_ln(message.from_user.last_name)))==len((obj.SQL_task_n(message.from_user.first_name))):
+        name = message.from_user.last_name + ' ' + message.from_user.first_name
+        result = obj.SQL_task_ln(message.from_user.last_name)
+        strr=''
+        print('51')
+        strr+='\n'+'📋 '+name + ' '
+
+        strr+=" open tasks: "+'\n'
+        for k in result:
+            for n in k:
+                strr +='⭕ '+n+'\n'
+        bot.send_message(message.chat.id,strr)
+
+
+
+
+
+    """
     result = obj.SQL_id(0)
     print(result)
     names=[]
@@ -62,6 +85,7 @@ def task(message):
                         strr +='⭕'+n+'\n'
     bot.send_message(message.chat.id,strr)
     print(strr)
+    """
 
 @bot.message_handler(commands=['stats'])
 def send_stats(message):
@@ -116,7 +140,7 @@ def send_done(message):
     else:
         bot.send_message(tel_id, 'You did not enter a task name')
 
-
+"""
 @bot.inline_handler(func=lambda query: True)
 def query_text(inline_query):
     print(inline_query)
@@ -128,11 +152,11 @@ def query_text(inline_query):
             message_text="Задача отмечена как выполненная")
 
 
-        bot.answer_inline_query(inline_query.id, r_sub)
+            bot.answer_inline_query(inline_query.id, r_sub)
     except Exception as e:
         print(e)
 
-"""
+
 
     result=obj.SQL_all(0)
 

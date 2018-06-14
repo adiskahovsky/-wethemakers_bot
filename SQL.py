@@ -18,7 +18,7 @@ class SQL:
         if last_name is not None and name is not None:
             self.task = str(last_name[0]+name[0]+last_name[0]+name[0]+' '+task)
 
-            self.cursor.execute("INSERT INTO tasks (last_name,name,telegram_id, task, data,done) VALUES ('{}','{}','{}','{}',{},{})".format(last_name,name,tel_id,self.task,data,done))
+            self.cursor.execute("INSERT INTO tasks (last_name,name,telegram_id, task, data,done) VALUES ('{}','{}','{}','{}',{},{})".format(last_name,name,tel_id,task,data,done))
             self.conn.commit()
 
     def SQL_all(self,done):
@@ -36,15 +36,22 @@ class SQL:
         self.result = self.cursor.fetchall()
         return self.result
 
-    def SQL_task_ln(self,last_name):
-        self.cursor.execute("SELECT task FROM tasks WHERE last_name LIKE '{}'".format(last_name))
+    def SQL_name_task(self,task):
+        self.cursor.execute("SELECT name FROM tasks WHERE task LIKE '{}'".format(task))
         self.last_name = self.cursor.fetchall()
         return self.last_name
 
+
+
+    def SQL_task_ln(self,last_name):
+        self.cursor.execute("SELECT task FROM tasks WHERE last_name LIKE '{}'".format(last_name))
+        self.task = self.cursor.fetchall()
+        return self.task
+
     def SQL_task_n(self,name):
         self.cursor.execute("SELECT task FROM tasks WHERE name LIKE '{}'".format(name))
-        self.name = self.cursor.fetchall()
-        return self.name
+        self.task = self.cursor.fetchall()
+        return self.task
 
     def SQL_done(self,tel_id,task,done,data,name,last_name):
         self.cursor.execute("INSERT INTO tasks (telegram_id, task, data, done, name, last_name) VALUES ('{}','{}','{}','{}','{}','{}')".format(tel_id,task,data,done,name,last_name))
