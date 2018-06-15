@@ -57,15 +57,27 @@ class SQL:
         self.cursor.execute("INSERT INTO tasks (telegram_id, task, data, done, name, last_name) VALUES ('{}','{}','{}','{}','{}','{}')".format(tel_id,task,data,done,name,last_name))
         self.conn.commit()
 
-    def SQL_stats0(self,tel_id,now_day,late_date):
+    def SQL_statsall0(self,tel_id,now_day,late_date):
         done = str(0)
         self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {}) and (data BETWEEN {} AND {})".format(tel_id,done,late_date,now_day))
         self.otvet = self.cursor.fetchone()
         return self.otvet
 
-    def SQL_stats1(self,tel_id,now_day,late_date):
+    def SQL_statsall1(self,tel_id,now_day,late_date):
         done = str(1)
         self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {}) and (data BETWEEN {} AND {})".format(tel_id,done,late_date,now_day))
+        self.otvet = self.cursor.fetchone()
+        return self.otvet
+
+    def SQL_stats0(self,tel_id,now_day,late_date,name,last_name):
+        done = str(0)
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {} and name = {} and last_name = {}) and (data BETWEEN {} AND {})".format(tel_id,done,name,last_name,late_date,now_day))
+        self.otvet = self.cursor.fetchone()
+        return self.otvet
+
+    def SQL_stats1(self,tel_id,now_day,late_date,name,last_name):
+        done = str(1)
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {} and name = {} and last_name = {}) and (data BETWEEN {} AND {})".format(tel_id,done,name,last_name,late_date,now_day))
         self.otvet = self.cursor.fetchone()
         return self.otvet
 
