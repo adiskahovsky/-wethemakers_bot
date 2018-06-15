@@ -9,14 +9,15 @@ conn = pymysql.connect(
 
 
 cursor = conn.cursor()
-cursor.execute("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTO_INCREMENT,last_name TEXT,name TEXT,telegram_id TEXT, task TEXT,data INTEGER,done TEXT)")
+#cursor.execute("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTO_INCREMENT,last_name TEXT,name TEXT,telegram_id TEXT, task TEXT,data INTEGER,done TEXT)")
 #cursor.execute("SELECT * FROM tasks WHERE done LIKE '0'")
 #cursor.execute("SELECT last_name, name FROM tasks WHERE id LIKE {}".format(21))
 #cursor.execute("SELECT last_name, name, task FROM tasks WHERE done LIKE '{}'".format('0'))
 
+cursor.execute("UPDATE tasks SET done='{}' WHERE id={} ".format(str(1),str(10)))
 
-result = cursor.fetchall()
-print(result)
+
+#print(last_name)
 conn.commit()
 conn.close()
 
