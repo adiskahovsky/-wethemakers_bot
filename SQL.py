@@ -41,15 +41,23 @@ class SQL:
         self.last_name = self.cursor.fetchall()
         return self.last_name
 
+    def SQL_name_done(self,name):
+        self.cursor.execute("SELECT done WHERE name LIKE '{}'".format(name))
+
+        self.name = self.cursor.fetchall()
+        return self.name
+
+
+
 
 
     def SQL_task_ln(self,last_name):
-        self.cursor.execute("SELECT task FROM tasks WHERE last_name LIKE '{}'".format(last_name))
+        self.cursor.execute("SELECT task FROM tasks WHERE last_name LIKE '{}' and done LIKE '0'".format(last_name))
         self.task = self.cursor.fetchall()
         return self.task
 
     def SQL_task_n(self,name):
-        self.cursor.execute("SELECT task FROM tasks WHERE name LIKE '{}'".format(name))
+        self.cursor.execute("SELECT task FROM tasks WHERE name LIKE '{}' and done LIKE '0'".format(name))
         self.task = self.cursor.fetchall()
         return self.task
 
@@ -57,19 +65,44 @@ class SQL:
         self.cursor.execute("INSERT INTO tasks (telegram_id, task, data, done, name, last_name) VALUES ('{}','{}','{}','{}','{}','{}')".format(tel_id,task,data,done,name,last_name))
         self.conn.commit()
 
-    def SQL_stats0(self,tel_id,now_day,late_date):
+    def SQL_statsall0(self,tel_id,now_day,late_date):
         done = str(0)
         self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {}) and (data BETWEEN {} AND {})".format(tel_id,done,late_date,now_day))
         self.otvet = self.cursor.fetchone()
         return self.otvet
 
-    def SQL_stats1(self,tel_id,now_day,late_date):
+    def SQL_statsall1(self,tel_id,now_day,late_date):
         done = str(1)
         self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {}) and (data BETWEEN {} AND {})".format(tel_id,done,late_date,now_day))
         self.otvet = self.cursor.fetchone()
         return self.otvet
 
+    def SQL_stats0(self,tel_id,now_day,late_date,name,last_name):
+        done = str(0)
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {} and name = {} and last_name = {}) and (data BETWEEN {} AND {})".format(tel_id,done,name,last_name,late_date,now_day))
+        self.otvet = self.cursor.fetchone()
+        return self.otvet
 
+    def SQL_stats1(self,tel_id,now_day,late_date,name,last_name):
+        done = str(1)
+        self.cursor.execute("SELECT count(*) FROM tasks WHERE (`telegram_id` = {} and `done` = {} and name = {} and last_name = {}) and (data BETWEEN {} AND {})".format(tel_id,done,name,last_name,late_date,now_day))
+        self.otvet = self.cursor.fetchone()
+        return self.otvet
+
+    def SQL_task_done(self, last_name,name):
+        self.cursor.execute("SELECT task FROM tasks WHERE name LIKE '{}' and last_name LIKE '{}' and done LIKE '0'".format(name,last_name))
+        self.last_name = self.cursor.fetchall()
+        return self.last_name
+
+    def SQL_done_id(self,last_name,name):
+        self.cursor.execute("SELECT id FROM tasks WHERE name LIKE '{}' and last_name LIKE '{}' and done LIKE '0'".format(name,last_name))
+        self.last_name = self.cursor.fetchall()
+        return self.last_name
+
+
+    def SQL_done_id_1(self,id):
+        self.cursor.execute("UPDATE tasks SET done='{}' WHERE id={} ".format(str(1),id))
+        self.conn.commit()
 
     def __del__(self):
 

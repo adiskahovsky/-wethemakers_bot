@@ -5,9 +5,13 @@ import telebot
 import SQL
 import task
 from telebot import  types
+from telebot.types import Update
+import flask
 import re
 bot = telebot.TeleBot(config.API_TOKEN)
 obj = SQL.SQL()
+
+
 
 
 @bot.message_handler(commands=['task'])
@@ -102,8 +106,8 @@ def send_stats(message):
         late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
         late_date = int(later_year.strftime("%j")) + now_day - 7
 
-    task_stats0 = obj.SQL_stats0(tel_id,now_day,late_date)
-    task_stats1 = obj.SQL_stats1(tel_id,now_day,late_date)
+    task_stats0 = obj.SQL_statsall0(tel_id,now_day,late_date)
+    task_stats1 = obj.SQL_statsall1(tel_id,now_day,late_date)
     if(task_stats0 or task_stats1):
         messageanswer0 = task_stats0[0]
         messageanswer1 = task_stats1[0]
@@ -119,6 +123,43 @@ def send_stats(message):
         else:
             text1 = ' tasks'
         messageanswer = '📋  Week summary of all: \n✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
+        bot.send_message(tel_id, messageanswer)
+    else:
+        bot.send_message(tel_id, 'No task found')
+
+@bot.message_handler(commands=['stats'])
+def send_stats(message):
+    now = datetime.datetime.now()
+    now_day = int(now.strftime("%j"))
+    tel_id = str(message.chat.id)
+    name = message.from_user.first_name
+    last_name = message.from_user.last_name
+    if(now_day > 7):
+        late_date = now_day - 7
+    else:
+		#late = 1
+        late_year = now.year - 1
+        late_date = later_year.strftime("%j")
+        late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
+        late_date = int(later_year.strftime("%j")) + now_day - 7
+
+    task_stats0 = obj.SQL_stats0(tel_id,now_day,late_date,name,last_name)
+    task_stats1 = obj.SQL_stats1(tel_id,now_day,late_date,name,last_name)
+    if(task_stats0 or task_stats1):
+        messageanswer0 = task_stats0[0]
+        messageanswer1 = task_stats1[0]
+        print(messageanswer0)
+        print(messageanswer1)
+        if(messageanswer0 < 2):
+            text0 = ' task'
+        else:
+            text0 = ' tasks'
+
+        if(messageanswer1 < 2):
+            text1 = ' task'
+        else:
+            text1 = ' tasks'
+        messageanswer = '✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
         bot.send_message(tel_id, messageanswer)
     else:
         bot.send_message(tel_id, 'No task found')
@@ -143,35 +184,69 @@ def send_done(message):
 
 @bot.inline_handler(func=lambda query: True)
 def query_text(query):
+
     digits_pattern= re.compile(r'^[0-9]+ [0-9]+$', re.MULTILINE)
     digits_pattern = re.compile(r'[^\s*]', re.MULTILINE)
     print("Пашет")
     try:
+
+        print(query.from_user.last_name)
+        last_name = query.from_user.last_name
+        first_name = query.from_user.first_name
         print('ok')
         matches = re.match(digits_pattern, query.query)
         num1  = matches.group().split()
         print('ok2')
         print(num1)
-        result_list=[]
+        result2=[]
+        result = obj.SQL_task_done(last_name=last_name,name=first_name)
+        for i in result:
+            for j in i:
+                result2.append(j)
+        result_list = []
 
-        result_list.append(
-            types.InlineQueryResultArticle('1', 'Title 1', types.InputTextMessageContent('Thanks for visit me'), None,
-                                           'http://telegram.org', True, 'Subtitle 1',
-                                           'https://telegram.org/img/t_logo.png', 640, 640))
+
+
+        k=0
+        ids = obj.SQL_done_id(last_name=last_name,name=first_name)
+        ids_list=[]
+        for i in ids:
+            for j in i:
+                ids_list.append(j)
+
+        for i in result2:
+            result_list.append(
+                types.InlineQueryResultArticle(str(ids_list[k]), '{}'.format(i), types.InputTextMessageContent('Task completed {}'.format(str(ids_list[k]))), None,
+                                               'http://telegram.org', True, 'id:{}'.format(str(ids_list[k])),
+                                               'https://telegram.org/img/t_logo.png', 640, 640))
+            k+=1
         print('ok3')
-        result_list.append(
-            types.InlineQueryResultArticle('2', 'Title 2', types.InputTextMessageContent('Thanks for visit me'), None,
-                                           'http://google.com', True, 'Subtitle 2',
-                                           'http://pbs.twimg.com/profile_images/848204538163195907/14Mw9m9Z.jpg', 640,
-                                           640))
+
         m_sub = num1
         print('ok4')
 
-
+        print(query)
         bot.answer_inline_query(query.id,result_list,cache_time=1)
     except AttributeError as ex:
         print("FUCKKKK")
         return
+
+
+@bot.message_handler(content_types=['text'])
+def send_done(message):
+    print(message.text)
+    text = message.text
+    text = text.split()
+    if(text[0]=='Task' and text[1]=='completed'):
+        print('True')
+        text.pop(0)
+        text.pop(0)
+        reseult_text =''
+        for i in text:
+            reseult_text+=i
+
+        print(reseult_text)
+        obj.SQL_done_id_1(reseult_text)
 
 
 """
