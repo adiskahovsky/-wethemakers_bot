@@ -153,7 +153,7 @@ def query_text(query):
         print('ok2')
         print(num1)
         result_list=[]
-        
+
         result_list.append(
             types.InlineQueryResultArticle('1', 'Title 1', types.InputTextMessageContent('Thanks for visit me'), None,
                                            'http://telegram.org', True, 'Subtitle 1',
