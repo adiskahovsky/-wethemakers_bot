@@ -102,8 +102,8 @@ def send_stats(message):
         late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
         late_date = int(later_year.strftime("%j")) + now_day - 7
 
-    task_stats0 = obj.SQL_stats0(tel_id,now_day,late_date)
-    task_stats1 = obj.SQL_stats1(tel_id,now_day,late_date)
+    task_stats0 = obj.SQL_statsall0(tel_id,now_day,late_date)
+    task_stats1 = obj.SQL_statsall1(tel_id,now_day,late_date)
     if(task_stats0 or task_stats1):
         messageanswer0 = task_stats0[0]
         messageanswer1 = task_stats1[0]
@@ -119,6 +119,43 @@ def send_stats(message):
         else:
             text1 = ' tasks'
         messageanswer = '📋  Week summary of all: \n✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
+        bot.send_message(tel_id, messageanswer)
+    else:
+        bot.send_message(tel_id, 'No task found')
+
+@bot.message_handler(commands=['stats'])
+def send_stats(message):
+    now = datetime.datetime.now()
+    now_day = int(now.strftime("%j"))
+    tel_id = str(message.chat.id)
+    name = message.from_user.first_name
+    last_name = message.from_user.last_name
+    if(now_day > 7):
+        late_date = now_day - 7
+    else:
+		#late = 1
+        late_year = now.year - 1
+        late_date = later_year.strftime("%j")
+        late_year = datetime.datetime(now.year - 1, 12, 31, now.hour, now.minute, now.second)
+        late_date = int(later_year.strftime("%j")) + now_day - 7
+
+    task_stats0 = obj.SQL_stats0(tel_id,now_day,late_date,name,last_name)
+    task_stats1 = obj.SQL_stats1(tel_id,now_day,late_date,name,last_name)
+    if(task_stats0 or task_stats1):
+        messageanswer0 = task_stats0[0]
+        messageanswer1 = task_stats1[0]
+        print(messageanswer0)
+        print(messageanswer1)
+        if(messageanswer0 < 2):
+            text0 = ' task'
+        else:
+            text0 = ' tasks'
+
+        if(messageanswer1 < 2):
+            text1 = ' task'
+        else:
+            text1 = ' tasks'
+        messageanswer = '✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
         bot.send_message(tel_id, messageanswer)
     else:
         bot.send_message(tel_id, 'No task found')
