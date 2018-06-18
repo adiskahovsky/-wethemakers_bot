@@ -26,6 +26,9 @@ class SQL:
         self.result = self.cursor.fetchall()
         return self.result
 
+    def SQL_clear(self):
+        self.cursor.execute("DELETE FROM tasks")
+
     def SQL_id(self,done):
         self.cursor.execute("SELECT id FROM tasks WHERE done LIKE '{}'".format(done))
         self.result = self.cursor.fetchall()
