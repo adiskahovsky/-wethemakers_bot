@@ -12,39 +12,63 @@ bot = telebot.TeleBot(config.API_TOKEN)
 obj = SQL.SQL()
 
 
+@bot.message_handler(commands=['all'])
+def task(message):
 
+    if(len(obj.SQL_task_ln(message.from_user.last_name)))==len((obj.SQL_task_n(message.from_user.first_name))):
+        name = message.from_user.last_name + ' ' + message.from_user.first_name
+        result = obj.SQL_task_ln(message.from_user.last_name)
+        strr=''
+        print('51')
+        strr+='\n'+'📋 '+name + ' '
+
+        strr+=" open tasks: "+'\n'
+        for k in result:
+            for n in k:
+                strr +='⭕ '+n+'\n'
+        bot.send_message(message.chat.id,strr)
 
 @bot.message_handler(commands=['task'])
 def task(message):
-    text = message.text
-    id = str(message.chat.id)
-    name = message.from_user.first_name
-    last_name = message.from_user.last_name
+	text = message.text
+	id = str(message.chat.id)
+	name = message.from_user.first_name
+	last_name = message.from_user.last_name
+	# if(name):
+	# 	pass
+	# else:
+	# 	name = ''
 
+	# if(last_name):
+	# 	pass
+	# else:
+	# 	last_name = ''
 
-    print(name)
+	print(name)
 
-    text = text.split()
-    text.pop(0)
+	text = text.split()
+	text.pop(0)
+	if(text):
+		result =''
+		for i in text:
 
-    result =''
-    for i in text:
+		    result += str(i) + ' '
 
-        result += str(i) + ' '
+		now = datetime.datetime.now()
+		now_day = int(now.strftime("%j"))
+		data = now_day
+		print(result)
 
-    now = datetime.datetime.now()
-    now_day = int(now.strftime("%j"))
-    data = now_day
-    print(result)
+		obj.SQL_add_task(tel_id=id,task=str(result),data=data,name=name,last_name=last_name)
 
-    obj.SQL_add_task(tel_id=id,task=str(result),data=data,name=name,last_name=last_name)
-
-    text2=''
-    for i in text:
-        text2+=i+' '
-    bot.send_message(message.chat.id,'⭕ {} added task: {}'.format(message.from_user.last_name+' '+
-                                                                  message.from_user.first_name,text2))
-    print(id)
+		text2=''
+		for i in text:
+		    text2+=i+' '
+		bot.send_message(message.chat.id,'⭕ {} added task: {}'.format(message.from_user.last_name+' '+
+		                                                              message.from_user.first_name,text2))
+		print(id)
+	else:
+		bot.send_message(message.chat.id, 'You did not enter a task name')
 
 @bot.message_handler(commands=['all'])
 def task(message):
@@ -161,7 +185,7 @@ def send_stats(message):
             text1 = ' task'
         else:
             text1 = ' tasks'
-        messageanswer = '✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
+        messageanswer = '📋' + name + ' ' + last_name + ' weekly\ntasks summary: \n✅ Completed: ' + str(messageanswer1) + text0 + '\n' + '⭕️ Open tasks: ' + str(messageanswer0) + text1
         bot.send_message(tel_id, messageanswer)
     else:
         bot.send_message(tel_id, 'No task found')
@@ -169,72 +193,90 @@ def send_stats(message):
 
 @bot.message_handler(commands=['done'])
 def send_done(message):
-    task = message.text.split('/done')[1]
-    tel_id = str(message.chat.id)
-    name = message.from_user.first_name
-    last_name = message.from_user.last_name
+	task = message.text.split('/done')[1]
+	tel_id = str(message.chat.id)
+	name = message.from_user.first_name
+	last_name = message.from_user.last_name
+	# if(name):
+	# 	pass
+	# else:
+	# 	name = ''
+		
+	# if(last_name):
+	# 	pass
+	# else:
+	# 	last_name = ''
 
-    if(task):
-        now = datetime.datetime.now()
-        now_day = int(now.strftime("%j"))
-        done = 1
-        data = now_day
-        obj.SQL_done(tel_id,task,done,data,name,last_name)
-        bot.send_message(tel_id, 'The task was successfully added and marked as done')
-    else:
-        bot.send_message(tel_id, 'You did not enter a task name')
+	if(task):
+		now = datetime.datetime.now()
+		now_day = int(now.strftime("%j"))
+		done = 1
+		data = now_day
+		obj.SQL_done(tel_id,task,done,data,name,last_name)
+		bot.send_message(tel_id, '✅ ' + name + ' ' + last_name +  ' completed:\n' + task)
+	else:
+		bot.send_message(tel_id, 'You did not enter a task name')
 
 @bot.inline_handler(func=lambda query: True)
 def query_text(query):
 
-    digits_pattern= re.compile(r'^[0-9]+ [0-9]+$', re.MULTILINE)
-    digits_pattern = re.compile(r'^$', re.MULTILINE)
-    print("Пашет")
-    try:
+	digits_pattern= re.compile(r'^[0-9]+ [0-9]+$', re.MULTILINE)
+	digits_pattern = re.compile(r'^$', re.MULTILINE)
+	print("Пашет")
+	try:
+		print(query.from_user.last_name)
+		last_name = query.from_user.last_name
+		first_name = query.from_user.first_name
+		# if(first_name):
+		# 	pass
+		# else:
+		# 	first_name = ''
+			
+		# if(last_name):
+		# 	pass
+		# else:
+		# 	last_name = ''
 
-        print(query.from_user.last_name)
-        last_name = query.from_user.last_name
-        first_name = query.from_user.first_name
-        print('ok')
-        matches = re.match(digits_pattern, query.query)
-        num1  = matches.group().split()
-        print('ok2')
-        print(num1)
-        result2=[]
+		print('ok')
+		matches = re.match(digits_pattern, query.query)
+		num1  = matches.group().split()
+		print('ok2')
+		print(num1)
+		result2=[]
 
-        result = obj.SQL_task_done(last_name=last_name,name=first_name)
-        for i in result:
-            for j in i:
-                result2.append(j)
-        result_list = []
-        print(result2)
+		result = obj.SQL_task_done(last_name=last_name,name=first_name)
+		for i in result:
+		    for j in i:
+		        result2.append(j)
+		result_list = []
+		print(result2)
 
 
-        k=0
-        ids = obj.SQL_done_id(last_name=last_name,name=first_name)
+		k=0
+		ids = obj.SQL_done_id(last_name=last_name,name=first_name)
 
 
-        ids_list=[]
-        for i in ids:
-            for j in i:
-                ids_list.append(j)
+		ids_list=[]
+		for i in ids:
+		    for j in i:
+		        ids_list.append(j)
 
-        for i in result2:
-            result_list.append(
-                types.InlineQueryResultArticle(str(ids_list[k]), '{}'.format(i), types.InputTextMessageContent('Task completed {}'.format(str(ids_list[k]))), None,
-                                               '', True, ''.format(str(ids_list[k])),
-                                               '', 640, 640))
-            k+=1
-        print('ok3')
+		for i in result2:
+		    result_list.append(
+		        types.InlineQueryResultArticle(str(ids_list[k]), '{}'.format(i), types.InputTextMessageContent('Task completed {}'.format(str(ids_list[k]))), None,
+		                                       '', True, ''.format(str(ids_list[k])),
+		                                       '', 640, 640))
+		    k+=1
+		print('ok3')
 
-        m_sub = num1
-        print('ok4')
+		m_sub = num1
+		print('ok4')
 
-        print(query)
-        bot.answer_inline_query(query.id,result_list,cache_time=1)
-    except AttributeError as ex:
-        print("FUCKKKK")
-        return
+		print(query)
+		bot.answer_inline_query(query.id,result_list,cache_time=1)
+	except AttributeError as ex:
+		print("FUCKKKK")
+		return
 
 
 @bot.message_handler(content_types=['text'])
@@ -262,7 +304,12 @@ def send_done(message):
             for j in i:
                 reseult_text.append(j)
         print(reseult_text)
-        bot.send_message(message.chat.id,'✅ {} {} completed: {}'.format(reseult_text[0] ,reseult_text[1],reseult_text[2]))
+        if(reseult_text[0] !='' and reseult_text[1] !='' and reseult_text[2] !=''):
+        	bot.send_message(message.chat.id,'✅ {} {} completed: {}'.format(reseult_text[0] ,reseult_text[1],reseult_text[2]))
+        elif(reseult_text[0] !='' and reseult_text[1] !=''):
+        	bot.send_message(message.chat.id,'✅ {} {} completed: {}'.format(reseult_text[0] ,reseult_text[1]))
+        elif(reseult_text[0] !=''):
+        	bot.send_message(message.chat.id,'✅ {} {} completed: {}'.format(reseult_text[0]))
 """
 @bot.inline_handler(func=lambda query: True)
 def query_text(inline_query):
