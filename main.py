@@ -6,7 +6,7 @@ import SQL
 import task
 from telebot import  types
 from telebot.types import Update
-import flask
+
 import re
 bot = telebot.TeleBot(config.API_TOKEN)
 obj = SQL.SQL()
@@ -36,7 +36,9 @@ def task(message):
     now_day = int(now.strftime("%j"))
     data = now_day
     print(result)
+
     obj.SQL_add_task(tel_id=id,task=str(result),data=data,name=name,last_name=last_name)
+
     text2=''
     for i in text:
         text2+=i+' '
@@ -186,7 +188,7 @@ def send_done(message):
 def query_text(query):
 
     digits_pattern= re.compile(r'^[0-9]+ [0-9]+$', re.MULTILINE)
-    digits_pattern = re.compile(r'[^\s*]', re.MULTILINE)
+    digits_pattern = re.compile(r'^$', re.MULTILINE)
     print("Пашет")
     try:
 
@@ -199,16 +201,19 @@ def query_text(query):
         print('ok2')
         print(num1)
         result2=[]
+
         result = obj.SQL_task_done(last_name=last_name,name=first_name)
         for i in result:
             for j in i:
                 result2.append(j)
         result_list = []
-
+        print(result2)
 
 
         k=0
         ids = obj.SQL_done_id(last_name=last_name,name=first_name)
+
+
         ids_list=[]
         for i in ids:
             for j in i:
@@ -217,8 +222,8 @@ def query_text(query):
         for i in result2:
             result_list.append(
                 types.InlineQueryResultArticle(str(ids_list[k]), '{}'.format(i), types.InputTextMessageContent('Task completed {}'.format(str(ids_list[k]))), None,
-                                               'http://telegram.org', True, 'id:{}'.format(str(ids_list[k])),
-                                               'https://telegram.org/img/t_logo.png', 640, 640))
+                                               '', True, ''.format(str(ids_list[k])),
+                                               '', 640, 640))
             k+=1
         print('ok3')
 
@@ -238,17 +243,26 @@ def send_done(message):
     text = message.text
     text = text.split()
     if(text[0]=='Task' and text[1]=='completed'):
+
+        bot.delete_message(message.chat.id,message.message_id)
         print('True')
         text.pop(0)
         text.pop(0)
+        print(text)
         reseult_text =''
         for i in text:
             reseult_text+=i
 
         print(reseult_text)
+        result = obj.SQL_last_data(reseult_text)
+        print(result)
         obj.SQL_done_id_1(reseult_text)
-
-
+        reseult_text=[]
+        for i in result:
+            for j in i:
+                reseult_text.append(j)
+        print(reseult_text)
+        bot.send_message(message.chat.id,'✅ {} {} completed: {}'.format(reseult_text[0] ,reseult_text[1],reseult_text[2]))
 """
 @bot.inline_handler(func=lambda query: True)
 def query_text(inline_query):

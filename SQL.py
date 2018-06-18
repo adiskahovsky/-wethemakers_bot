@@ -97,8 +97,12 @@ class SQL:
     def SQL_done_id(self,last_name,name):
         self.cursor.execute("SELECT id FROM tasks WHERE name LIKE '{}' and last_name LIKE '{}' and done LIKE '0'".format(name,last_name))
         self.last_name = self.cursor.fetchall()
+        print("Пиздец")
         return self.last_name
 
+    def SQL_last_data(self,id):
+        self.cursor.execute("SELECT last_name,name,task FROM tasks WHERE id LIKE {} ".format(id))
+        return self.cursor.fetchall()
 
     def SQL_done_id_1(self,id):
         self.cursor.execute("UPDATE tasks SET done='{}' WHERE id={} ".format(str(1),id))

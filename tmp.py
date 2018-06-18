@@ -14,9 +14,9 @@ cursor = conn.cursor()
 #cursor.execute("SELECT last_name, name FROM tasks WHERE id LIKE {}".format(21))
 #cursor.execute("SELECT last_name, name, task FROM tasks WHERE done LIKE '{}'".format('0'))
 
-cursor.execute("UPDATE tasks SET done='{}' WHERE id={} ".format(str(1),str(10)))
-
-
+#cursor.execute("UPDATE tasks SET done='{}' WHERE id={} ".format(str(1),str(10)))
+cursor.execute("SELECT last_name,name,task FROM tasks WHERE id LIKE {} ".format(74))
+print(cursor.fetchall())
 #print(last_name)
 conn.commit()
 conn.close()
